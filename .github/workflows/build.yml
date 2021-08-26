@@ -1,0 +1,107 @@
+name: ping2109GSIs Builder
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Load Configuration
+        uses: falti/dotenv-action@v0.2.5
+        id: config
+        with:
+          path: config.env
+      - name: Check Configuration
+        run: |
+          function required () { if ! [[ "$1" ]]; then echo "$2 variable can't be null." && exit 1; fi }
+          required "${{ secrets.USERNAME }}" "USERNAME secret"
+          required "${{ secrets.PASSWORD }}" "PASSWORD secret"
+          required "${{ steps.config.outputs.tool_repo }}" "TOOL_REPO config"
+          required "${{ steps.config.outputs.url }}" "URL config"
+          required "${{ steps.config.outputs.firmware_type }}" "FIRMWARE_TYPE config"
+          required "${{ steps.config.outputs.sourceforge_dir }}" "SOURCEFORGE_DIR config"
+          required "${{ steps.config.outputs.output_type }}" "OUTPUT_TYPE config"
+          required "${{ steps.config.outputs.post_title }}" "POST_TITLE config"
+          required "${{ steps.config.outputs.device }}" "DEVICE config"
+          required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
+          required "${{ secrets.TG_BOT_TOKEN }}" "TG_BOT_TOKEN config"
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.5'
+      - name: Install python requirements
+        run: |
+          pip install python-telegram-bot pyrogram tgcrypto
+      - name: Setup ErfanGSIs Tools
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+        run: |
+          sudo install telegram /usr/bin
+          . notify/1.sh
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install git openjdk-8-jdk p7zip
+          git clone --recurse-submodules "${{ steps.config.outputs.tool_repo }}" ErfanGSIs
+          sudo chmod -R 777 ErfanGSIs
+          sudo bash ErfanGSIs/setup.sh
+          sed -i '$d' ErfanGSIs/url2GSI.sh
+      - name: Build A/B
+        if: ${{ steps.config.outputs.output_type == 'all' }}
+        run: |
+          sudo ./ErfanGSIs/url2GSI.sh "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+      - name: Build AB
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+        if: ${{ steps.config.outputs.output_type == 'ab' }}
+        run: |
+          . notify/2.sh
+          sudo ./ErfanGSIs/url2GSI.sh -b "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+      - name: Build AOnly
+        if: ${{ steps.config.outputs.output_type == 'a' }}
+        run: |
+          sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+      - name: Pre-Upload
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+        run: |
+          . notify/3.sh
+          mkdir build/
+          sudo mv ErfanGSIs/output/*.img build/
+          cd build
+          for f in *.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
+          ls
+          cd -
+          gzip -r build/
+          cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
+      - name: Setup SSH
+        uses: fastai/workflows/ssh@master
+        with:
+          ssh_key: ${{ secrets.SSH_KEY }}
+          key_file: id_ecdsa
+      - name: Upload
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+        run: |
+          . notify/4.sh
+          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/${{ steps.config.outputs.img_name }}"
+          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
+          sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
+      - name: Telegram Notify
+        continue-on-error: true
+        env:
+              DEVICE: "${{ steps.config.outputs.device }}"
+              POST_TITLE: "${{ steps.config.outputs.post_title }}"
+              URL: "${{ steps.config.outputs.url }}"
+              REQUEST: "${{ steps.config.outputs.request }}"
+              TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
+              SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
+        run: |
+          python .github/workflows/out.py
+          . notify/5.sh
