@@ -25,6 +25,7 @@ jobs:
           required "${{ steps.config.outputs.firmware_type }}" "FIRMWARE_TYPE config"
           required "${{ steps.config.outputs.sourceforge_dir }}" "SOURCEFORGE_DIR config"
           required "${{ steps.config.outputs.output_type }}" "OUTPUT_TYPE config"
+          required "${{ steps.config.outputs.chat_id }}" "CHAT_ID config"
           required "${{ steps.config.outputs.post_title }}" "POST_TITLE config"
           required "${{ steps.config.outputs.device }}" "DEVICE config"
           required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
@@ -40,6 +41,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
+              CHAT_ID: ${{ steps.config.outputs.chat_id }}
         run: |
           sudo install telegram /usr/bin
           . notify/1.sh
@@ -57,6 +59,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
+              CHAT_ID: ${{ steps.config.outputs.chat_id }}
         if: ${{ steps.config.outputs.output_type == 'ab' }}
         run: |
           . notify/2.sh
@@ -69,6 +72,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
+              CHAT_ID: ${{ steps.config.outputs.chat_id }}
         run: |
           . notify/3.sh
           mkdir build/
@@ -88,6 +92,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
+              CHAT_ID: ${{ steps.config.outputs.chat_id }}
         run: |
           . notify/4.sh
           SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/${{ steps.config.outputs.img_name }}"
@@ -102,6 +107,7 @@ jobs:
               REQUEST: "${{ steps.config.outputs.request }}"
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
               SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
+              CHAT_ID: ${{ steps.config.outputs.chat_id }}
         run: |
           python .github/workflows/out.py
           . notify/5.sh
