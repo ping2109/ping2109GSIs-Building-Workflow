@@ -26,6 +26,7 @@ jobs:
           required "${{ steps.config.outputs.sourceforge_dir }}" "SOURCEFORGE_DIR config"
           required "${{ steps.config.outputs.output_type }}" "OUTPUT_TYPE config"
           required "${{ steps.config.outputs.chat_id }}" "CHAT_ID config"
+          required "${{ steps.config.outputs.logs_id }}" "LOGS_ID config"
           required "${{ steps.config.outputs.post_title }}" "POST_TITLE config"
           required "${{ steps.config.outputs.device }}" "DEVICE config"
           required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
