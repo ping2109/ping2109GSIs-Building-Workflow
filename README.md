@@ -3,6 +3,7 @@ Make (Semi) Generic System Images using GitHub Workflows then upload to SourceFo
 
 # How To Use
 - Fork the repo
+- Go to Settings > Secrets and enter USERNAME as SF username, PASSWORD as SF password and TG_BOT_TOKEN as the bot's token
 - Enter your SourceForge project in config.env (replace mine)
 - Enter your TG upload channel and logs channel's id
 - Go to actions tab, enable workflows
