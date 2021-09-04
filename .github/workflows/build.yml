@@ -42,7 +42,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
-              CHAT_ID: ${{ steps.config.outputs.chat_id }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           sudo install telegram /usr/bin
           . notify/1.sh
@@ -60,7 +60,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
-              CHAT_ID: ${{ steps.config.outputs.chat_id }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         if: ${{ steps.config.outputs.output_type == 'ab' }}
         run: |
           . notify/2.sh
@@ -73,7 +73,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
-              CHAT_ID: ${{ steps.config.outputs.chat_id }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/3.sh
           mkdir build/
@@ -93,7 +93,7 @@ jobs:
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
-              CHAT_ID: ${{ steps.config.outputs.chat_id }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/4.sh
           SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/${{ steps.config.outputs.img_name }}"
@@ -109,6 +109,7 @@ jobs:
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
               SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           python .github/workflows/out.py
           . notify/5.sh
