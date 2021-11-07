@@ -26,7 +26,7 @@ def send_test_sticker():
 def send_test_message():
     try:
         telegram_notify = telegram.Bot(bot_token)
-        message = f"""{req}*{rom}*\nFrom *{dev}*\n\n*Information:*\n`{cat}`\n\n*Builder's notes:*\n{notice}\n*Download:* [here]({dab})\n*File not found? Wait a bit, SF server is mirroring*\n\n*Credits:* [Erfan](https://github.com/Erfanoabdi) | [Velosh](https://t.me/Velosh) | [cyto](https://t.me/cytolytic) | [PruhMirror](https://t.me/PruhBruhNahMirror)\n*Built by @ping2109gsis\nJoin @ping2109gsischat*"""
+        message = f"""{req}*{rom}*\nFrom *{dev}*\n\n*Information:*\n`{cat}`\n*Builder's notes:*\n{notice}\n\n*Download:* [here]({dab})\n*File not found? Wait a bit, SF server is mirroring*\n\n*Credits:* [Erfan](https://github.com/Erfanoabdi) | [Velosh](https://t.me/Velosh) | [cyto](https://t.me/cytolytic) | [PruhMirror](https://t.me/PruhBruhNahMirror)\n*Built by @ping2109gsis\nJoin @ping2109gsischat*"""
 
         telegram_notify.send_message(chat_id=channel, text=message, disable_web_page_preview=True,
                                 parse_mode='Markdown')
