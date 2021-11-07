@@ -87,7 +87,7 @@ jobs:
           for f in *.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
           ls
           cd -
-          echo $RANDOM | base64 | head -c 20
+          echo $RANDOM | base64 | head -c 25
           gzip -r build/
           cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
       - name: Setup SSH
