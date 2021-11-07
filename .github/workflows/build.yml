@@ -31,6 +31,10 @@ jobs:
           required "${{ steps.config.outputs.device }}" "DEVICE config"
           required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
           required "${{ secrets.TG_BOT_TOKEN }}" "TG_BOT_TOKEN config"
+          git config --global user.name ${{ secrets.GH_NAME }}
+          git config --global user.email ${{ secrets.GH_MAIL }}
+          git config --global credential.helper store
+          echo "https://${{ secrets.GH_NAME }}:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
       - name: Set up python
         uses: actions/setup-python@v2
         with:
@@ -110,6 +114,7 @@ jobs:
               SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
+              NOTICE: ${{ steps.config.outputs.notice }}
         run: |
           python .github/workflows/out.py
           . notify/5.sh
