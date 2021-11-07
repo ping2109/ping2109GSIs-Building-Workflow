@@ -113,7 +113,7 @@ jobs:
               URL: "${{ steps.config.outputs.url }}"
               REQUEST: "${{ steps.config.outputs.request }}"
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
-              SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
+              SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}$RANDOM-${{ steps.config.outputs.img_name }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
               NOTICE: ${{ steps.config.outputs.notice }}
