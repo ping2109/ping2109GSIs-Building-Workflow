@@ -32,6 +32,10 @@ jobs:
           required "${{ steps.config.outputs.device }}" "DEVICE config"
           required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
           required "${{ secrets.TG_BOT_TOKEN }}" "TG_BOT_TOKEN config"
+          git config --global user.name ${{ secrets.GH_NAME }}
+          git config --global user.email ${{ secrets.GH_MAIL }}
+          git config --global credential.helper store
+          echo "https://${{ secrets.GH_NAME }}:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
       - name: Set up python
         uses: actions/setup-python@v2
         with:
@@ -83,6 +87,7 @@ jobs:
           for f in *.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
           ls
           cd -
+          echo $RANDOM | base64 | head -c 20
           gzip -r build/
           cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
       - name: Setup SSH
@@ -97,7 +102,7 @@ jobs:
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/4.sh
-          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/${{ steps.config.outputs.img_name }}"
+          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$RANDOM-${{ steps.config.outputs.img_name }}"
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
       - name: Telegram Notify
@@ -111,6 +116,7 @@ jobs:
               SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}${{ steps.config.outputs.img_name }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
+              NOTICE: ${{ steps.config.outputs.notice }}
         run: |
           python .github/workflows/out.py
           . notify/5.sh
