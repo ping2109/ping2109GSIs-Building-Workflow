@@ -102,7 +102,8 @@ jobs:
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/4.sh
-          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$RANDOM-${{ steps.config.outputs.img_name }}"
+          SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
+          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
       - name: Telegram Notify
@@ -112,7 +113,7 @@ jobs:
               POST_TITLE: "${{ steps.config.outputs.post_title }}"
               URL: "${{ steps.config.outputs.url }}"
               REQUEST: "${{ steps.config.outputs.request }}"
-              SOURCEFORGE: $SF_FOLDER
+              SOURCEFORGE: "${{ steps.config.outputs.sourceforge_url }}$SF_IMG"
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
