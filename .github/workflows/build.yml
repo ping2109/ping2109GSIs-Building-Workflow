@@ -97,18 +97,6 @@ jobs:
           key_file: id_ecdsa
       - name: Upload
         env:
-              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-              POST_TITLE: ${{ steps.config.outputs.post_title }}
-              LOGS_ID: ${{ steps.config.outputs.logs_id }}
-        run: |
-          . notify/4.sh
-          SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
-          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
-          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
-          sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
-      - name: Telegram Notify
-        continue-on-error: true
-        env:
               DEVICE: "${{ steps.config.outputs.device }}"
               POST_TITLE: "${{ steps.config.outputs.post_title }}"
               URL: "${{ steps.config.outputs.url }}"
@@ -116,8 +104,14 @@ jobs:
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
-              NOTICE: ${{ steps.config.outputs.notice }}
+              NOTICE: ${{ steps.config.outputs.notice }}  
         run: |
+          . notify/4.sh
+          SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
+          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
+          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
+          sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
           export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG"
           python .github/workflows/out.py
           . notify/5.sh
+          
