@@ -112,11 +112,11 @@ jobs:
               POST_TITLE: "${{ steps.config.outputs.post_title }}"
               URL: "${{ steps.config.outputs.url }}"
               REQUEST: "${{ steps.config.outputs.request }}"
+              SOURCEFORGE: $SF_FOLDER
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
               CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
               NOTICE: ${{ steps.config.outputs.notice }}
         run: |
-          SOURCEFORGE=$SF_FOLDER
           python .github/workflows/out.py
           . notify/5.sh
