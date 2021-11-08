@@ -101,7 +101,7 @@ jobs:
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/3.sh
-          cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
+          cp ErfanGSIs/out/*p2109GSI.txt ping2109.txt
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/
           sudo mv ErfanGSIs/output/*Aonly*.img build/
