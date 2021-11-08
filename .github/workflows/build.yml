@@ -85,6 +85,16 @@ jobs:
           . notify/2.sh
           sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Pre-Upload
+        run: |
+          cd ErfanGSIs
+          ls
+          cd output
+          ls
+          cd ../
+          cd out
+          ls
+          cd ../../
+      - name: Pre-Upload
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
