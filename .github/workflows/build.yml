@@ -120,8 +120,8 @@ jobs:
               NOTICE: ${{ steps.config.outputs.notice }}  
         run: |
           GZ_PATH=build
-          GZ_NAME=( "$GZ_PATH"/*AB*.gz )
-          GZ_NAME2=( "$GZ_PATH"/*Aonly*.gz )
+          GZ_NAME=( "$GZ_PATH/*AB*.gz" )
+          GZ_NAME2=( "$GZ_PATH/*Aonly*.gz" )
           . notify/4.sh
           SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
           SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
