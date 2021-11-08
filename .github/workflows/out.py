@@ -3,7 +3,7 @@ import telegram
 from telegram import Sticker, PhotoSize, TelegramError, StickerSet, MaskPosition, Bot
 from telegram.error import BadRequest
 
-with open('ErfanGSIs/output/ping2109.txt') as f:
+with open('ping2109.txt') as f:
     os.environ['CAT_FILE'] = f.read()
 
 rom = os.getenv('POST_TITLE')
