@@ -82,6 +82,7 @@ jobs:
         run: |
           . notify/3.sh
           mkdir build/
+          GSI_IMG_NAME=ErfanGSIs/output/*.img
           sudo mv ErfanGSIs/output/*.img build/
           cd build
           for f in *.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
@@ -111,7 +112,7 @@ jobs:
           SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
-          export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG"
+          export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GSI_IMG_NAME/download"
           python .github/workflows/out.py
           . notify/5.sh
           
