@@ -65,8 +65,7 @@ jobs:
         if: ${{ steps.config.outputs.output_type == 'all' }}
         run: |
           . notify/2.sh
-          sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
-          sudo ./ErfanGSIs/url2GSI.sh -b "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+          sudo ./ErfanGSIs/url2GSI.sh "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Build AB
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
@@ -92,6 +91,7 @@ jobs:
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/3.sh
+          cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/
           sudo mv ErfanGSIs/output/*Aonly*.img build/
@@ -104,7 +104,6 @@ jobs:
           gzip -r build/*AB*.img
           gzip -r build/*Aonly*.img
           ls
-          cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
         with:
