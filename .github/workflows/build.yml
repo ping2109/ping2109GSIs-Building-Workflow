@@ -85,23 +85,13 @@ jobs:
           . notify/2.sh
           sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Pre-Upload
-        run: |
-          cd ErfanGSIs
-          ls
-          cd output
-          ls
-          cd ../
-          cd out
-          ls
-          cd ../../
-      - name: Pre-Upload
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
               POST_TITLE: ${{ steps.config.outputs.post_title }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/3.sh
-          cp ErfanGSIs/out/*p2109GSI.txt ping2109.txt
+          cp ErfanGSIs/out/*AB*p2109GSI.txt ping2109.txt
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/
           sudo mv ErfanGSIs/output/*Aonly*.img build/
@@ -110,7 +100,7 @@ jobs:
           for f2 in *Aonly*.img; do mv -- "$f2" "${{ steps.config.outputs.img_name }}${f2%.img}.img"; done
           ls
           cd -
-          echo $RANDOM | base64 | head -c 35 | cut -c -5
+          echo $RANDOM | base64 | cut -c -5
           gzip -r build/*AB*.img
           gzip -r build/*Aonly*.img
           ls
