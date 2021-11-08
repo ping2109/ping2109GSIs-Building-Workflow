@@ -102,7 +102,7 @@ jobs:
           echo $RANDOM | base64 | head -c 35 | cut -c -5
           gzip -r build/*AB*.img
           gzip -r build/*Aonly*.img
-          cp ErfanGSIs/output/*.txt ping2109.txt
+          cp ErfanGSIs/output/*.txt ping2109.txt/
           ls
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
