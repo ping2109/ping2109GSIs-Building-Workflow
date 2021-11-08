@@ -57,9 +57,14 @@ jobs:
           sudo chmod -R 777 ErfanGSIs
           sudo bash ErfanGSIs/setup.sh
           sed -i '$d' ErfanGSIs/url2GSI.sh
-      - name: Build A/B
+      - name: Build both
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         if: ${{ steps.config.outputs.output_type == 'all' }}
         run: |
+          . notify/2.sh
           sudo ./ErfanGSIs/url2GSI.sh "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Build AB
         env:
@@ -71,8 +76,13 @@ jobs:
           . notify/2.sh
           sudo ./ErfanGSIs/url2GSI.sh -b "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Build AOnly
+        env:
+              TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+              POST_TITLE: ${{ steps.config.outputs.post_title }}
+              LOGS_ID: ${{ steps.config.outputs.logs_id }}
         if: ${{ steps.config.outputs.output_type == 'a' }}
         run: |
+          . notify/2.sh
           sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
       - name: Pre-Upload
         env:
@@ -82,13 +92,16 @@ jobs:
         run: |
           . notify/3.sh
           mkdir build/
-          sudo mv ErfanGSIs/output/*.img build/
+          sudo mv ErfanGSIs/output/*AB*.img build/
+          sudo mv ErfanGSIs/output/*Aonly*.img build/
           cd build
-          for f in *.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
+          for f in *AB*.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
+          for f2 in *Aonly*.img; do mv -- "$f2" "${{ steps.config.outputs.img_name }}${f2%.img}.img"; done
           ls
           cd -
           echo $RANDOM | base64 | head -c 35 | cut -c -5
-          gzip -r build/
+          gzip -r build/*AB*.img
+          gzip -r build/*Aonly*.img
           cp ErfanGSIs/output/*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
@@ -107,13 +120,15 @@ jobs:
               NOTICE: ${{ steps.config.outputs.notice }}  
         run: |
           GZ_PATH=build
-          GZ_NAME=( "$GZ_PATH"/*.gz )
+          GZ_NAME=( "$GZ_PATH"/*AB*.gz )
+          GZ_NAME2=( "$GZ_PATH"/*Aonly*.gz )
           . notify/4.sh
           SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
           SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
           export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME/download"
+          export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME2/download"
           python .github/workflows/out.py
           . notify/5.sh
           
