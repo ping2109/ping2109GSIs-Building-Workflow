@@ -91,7 +91,6 @@ jobs:
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
         run: |
           . notify/3.sh
-          cp ErfanGSIs/out/*AB*p2109GSI.txt ping2109.txt
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/
           sudo mv ErfanGSIs/output/*Aonly*.img build/
@@ -103,7 +102,7 @@ jobs:
           echo $RANDOM | base64 | cut -c -5
           gzip -r build/*AB*.img
           gzip -r build/*Aonly*.img
-          ls
+          cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
         with:
