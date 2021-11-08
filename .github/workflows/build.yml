@@ -128,7 +128,7 @@ jobs:
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
           export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME/download"
-          export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME2/download"
+          export SOURCEFORGE2="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME2/download"
           python .github/workflows/out.py
           . notify/5.sh
           
