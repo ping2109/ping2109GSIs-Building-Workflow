@@ -100,8 +100,8 @@ jobs:
           ls
           cd -
           echo $RANDOM | base64 | cut -c -5
-          gzip -r build/*AB*.img
-          gzip -r build/*Aonly*.img
+          zip -m "[$VARIANT]-$FOLDER_NAME-AB-[$VNDK]-NevaGSI.zip" build/*AB*.img
+          zip -m "[$VARIANT]-$FOLDER_NAME-A-[$VNDK]-NevaGSI.zip" build/*Aonly*.img
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
@@ -120,12 +120,12 @@ jobs:
               NOTICE: ${{ steps.config.outputs.notice }}  
         run: |
           cd build
-          GZ_NAME=( *AB*.gz )
-          GZ_NAME2=( *Aonly*.gz )
+          GZ_NAME=( *-AB-*.zip )
+          GZ_NAME2=( *-A-*.zip )
           cd ../
           . notify/4.sh
           SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
-          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$SF_IMG"
+          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$FOLDER_NAME"
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
           sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh build/ "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
           export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME"
