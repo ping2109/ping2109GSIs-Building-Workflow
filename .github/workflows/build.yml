@@ -18,20 +18,6 @@ jobs:
           path: config.env
       - name: Check Configuration
         run: |
-          function required () { if ! [[ "$1" ]]; then echo "$2 variable can't be null." && exit 1; fi }
-          required "${{ secrets.USERNAME }}" "USERNAME secret"
-          required "${{ secrets.PASSWORD }}" "PASSWORD secret"
-          required "${{ steps.config.outputs.tool_repo }}" "TOOL_REPO config"
-          required "${{ steps.config.outputs.url }}" "URL config"
-          required "${{ steps.config.outputs.firmware_type }}" "FIRMWARE_TYPE config"
-          required "${{ steps.config.outputs.sourceforge_dir }}" "SOURCEFORGE_DIR config"
-          required "${{ steps.config.outputs.output_type }}" "OUTPUT_TYPE config"
-          required "${{ steps.config.outputs.chat_id }}" "CHAT_ID config"
-          required "${{ steps.config.outputs.logs_id }}" "LOGS_ID config"
-          required "${{ steps.config.outputs.post_title }}" "POST_TITLE config"
-          required "${{ steps.config.outputs.device }}" "DEVICE config"
-          required "${{ steps.config.outputs.img_name }}" "IMG_NAME config"
-          required "${{ secrets.TG_BOT_TOKEN }}" "TG_BOT_TOKEN config"
           git config --global user.name ${{ secrets.GH_NAME }}
           git config --global user.email ${{ secrets.GH_MAIL }}
           git config --global credential.helper store
@@ -100,37 +86,19 @@ jobs:
           ls
           cd -
           echo $RANDOM | base64 | cut -c -5
-          zip -m "[$VARIANT]-$FOLDER_NAME-AB-[$VNDK]-NevaGSI.zip" build/*AB*.img
-          zip -m "[$VARIANT]-$FOLDER_NAME-A-[$VNDK]-NevaGSI.zip" build/*Aonly*.img
+          zip -m "system.zip" build/*AB*.img
+          zip -m "system_A.zip" build/*Aonly*.img
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
-        with:
-          ssh_key: ${{ secrets.SSH_KEY }}
-          key_file: id_ecdsa
       - name: Upload
         env:
-              DEVICE: "${{ steps.config.outputs.device }}"
-              POST_TITLE: "${{ steps.config.outputs.post_title }}"
-              URL: "${{ steps.config.outputs.url }}"
-              REQUEST: "${{ steps.config.outputs.request }}"
               TOKEN: "${{ secrets.TG_BOT_TOKEN }}"
-              CHAT_ID: ${{ steps.config.outputs.chat_id }}
               LOGS_ID: ${{ steps.config.outputs.logs_id }}
-              NOTICE: ${{ steps.config.outputs.notice }}  
         run: |
           cd build
-          GZ_NAME="[$VARIANT]-$FOLDER_NAME-AB-[$VNDK]-NevaGSI.zip"
-          GZ_NAME2="[$VARIANT]-$FOLDER_NAME-A-[$VNDK]-NevaGSI.zip"
           cd ../
           . notify/4.sh
-          SF_IMG="$RANDOM-${{ steps.config.outputs.img_name }}"
-          SF_FOLDER="${{ steps.config.outputs.sourceforge_dir }}/$FOLDER_NAME"
-          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
-          sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh *-AB-*.zip "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
-          sshpass -p "${{ secrets.PASSWORD }}" rsync -arsP -e ssh *-A-*.zip "${{ secrets.USERNAME }}@frs.sourceforge.net:$SF_FOLDER"
-          export SOURCEFORGE="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME"
-          export SOURCEFORGE2="${{ steps.config.outputs.sourceforge_url }}$SF_IMG/$GZ_NAME2"
-          python .github/workflows/out.py
+          cat ping2109.txt 
+          curl -sL https://git.io/file-transfer | sh && ./transfer wet system*.zip
           . notify/5.sh
-          
