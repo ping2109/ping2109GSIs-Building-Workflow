@@ -60,7 +60,7 @@ jobs:
         if: ${{ steps.config.outputs.output_type == 'ab' }}
         run: |
           . notify/2.sh
-          sudo ./ErfanGSIs/url2GSI.sh -b "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+          sudo ./ErfanGSIs/url2GSI.sh "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" -b "${{ steps.config.outputs.extra_args }}"
       - name: Build AOnly
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
         if: ${{ steps.config.outputs.output_type == 'a' }}
         run: |
           . notify/2.sh
-          sudo ./ErfanGSIs/url2GSI.sh -a "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" "${{ steps.config.outputs.extra_args }}"
+          sudo ./ErfanGSIs/url2GSI.sh "${{ steps.config.outputs.url }}" "${{ steps.config.outputs.firmware_type }}" -a "${{ steps.config.outputs.extra_args }}"
       - name: Pre-Upload
         env:
               TOKEN: ${{ secrets.TG_BOT_TOKEN }}
