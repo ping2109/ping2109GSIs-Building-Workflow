@@ -79,15 +79,8 @@ jobs:
           . notify/3.sh
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/
-          sudo mv ErfanGSIs/output/*Aonly*.img build/
-          cd build
-          for f in *AB*.img; do mv -- "$f" "${{ steps.config.outputs.img_name }}${f%.img}.img"; done
-          for f2 in *Aonly*.img; do mv -- "$f2" "${{ steps.config.outputs.img_name }}${f2%.img}.img"; done
-          ls
-          cd -
           echo $RANDOM | base64 | cut -c -5
           zip -m "system.zip" build/*AB*.img
-          zip -m "system_A.zip" build/*Aonly*.img
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
@@ -100,5 +93,5 @@ jobs:
           cd ../
           . notify/4.sh
           cat ping2109.txt 
-          curl -sL https://git.io/file-transfer | sh && ./transfer wet system*.zip
+          curl -sL https://git.io/file-transfer | sh && ./transfer wet system.zip
           . notify/5.sh
