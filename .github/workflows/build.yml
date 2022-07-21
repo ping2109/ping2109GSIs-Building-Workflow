@@ -78,10 +78,14 @@ jobs:
         run: |
           . notify/3.sh
           mkdir build/
-          sudo mv ErfanGSIs/output/*AB*.img build/
+          sudo mv ErfanGSIs/output/*AB*.img build/system.img
           echo $RANDOM | base64 | cut -c -5
-          zip -m "system.zip" build/*AB*.img
+          zip -m "system.zip" build/*.img
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
+          mkdir build/vendor
+          mkdir build/vendor/overlay
+          tar -xf *.tar.gz -C build/vendor/overlay
+          zip -r overlay.zip build/vendor
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
       - name: Upload
@@ -93,5 +97,5 @@ jobs:
           cd ../
           . notify/4.sh
           cat ping2109.txt 
-          curl -sL https://git.io/file-transfer | sh && ./transfer wet system.zip
+          curl -sL https://git.io/file-transfer | sh && ./transfer wet system.zip && ./transfer wet overlay.zip
           . notify/5.sh
