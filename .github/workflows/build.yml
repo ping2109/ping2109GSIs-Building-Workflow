@@ -79,6 +79,7 @@ jobs:
           . notify/3.sh
           mkdir build/
           sudo mv ErfanGSIs/output/*AB*.img build/system.img
+          sudo mv ErfanGSIs/output/*.gz build/overlay.tar.gz
           echo $RANDOM | base64 | cut -c -5
           zip -m "system.zip" build/*.img
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
