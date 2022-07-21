@@ -85,7 +85,7 @@ jobs:
           cp ErfanGSIs/output/*AB*p2109GSI.txt ping2109.txt
           mkdir build/vendor
           mkdir build/vendor/overlay
-          tar -xf *.tar.gz -C build/vendor/overlay
+          tar -xf build/*.tar.gz -C build/vendor/overlay
           zip -r overlay.zip build/vendor
       - name: Setup SSH
         uses: fastai/workflows/ssh@master
